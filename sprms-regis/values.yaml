@@ -1,0 +1,48 @@
+replicaCount: 1
+
+image:
+  repository: dev-harbor.systems.gov.bt/spms/sprms_regis
+  tag: "202606290917"
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: harbor-secret
+
+containerPort: 8081
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8081
+  nodePort: 31128
+
+configMapName: sprms-regis-deployment-config
+secretName: sprms-regis-deployment-secret
+
+pvc:
+  enabled: true
+  name: sprms-uploads
+  mountPath: /data/uploads
+
+resources:
+   requests:
+     memory: 512Mi
+     cpu: 250m
+   limits:
+     memory: 1Gi
+     cpu: 500m
+
+readinessProbe:
+  enabled: false
+
+livenessProbe:
+  enabled: false
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+terminationGracePeriodSeconds: 30
